@@ -3,7 +3,8 @@
 namespace Drupal\gpx_field\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
-use Drupal\Core\TypedData\MapDataDefinition;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\TypedData\DataDefinition;
 use Drupal\file\Plugin\Field\FieldType\FileItem;
 
 /**
@@ -20,22 +21,13 @@ use Drupal\file\Plugin\Field\FieldType\FileItem;
  *   constraints = {"ReferenceAccess" = {}, "FileValidation" = {}}
  * )
  */
-
 class GpxFile extends FileItem {
   /**
    * {@inheritdoc}
    */
   public static function defaultFieldSettings() {
-
     $settings = parent::defaultFieldSettings();
-
-    $settings = [
-      'file_directory' => '',
-      'file_extensions' => 'gpx',
-      'max_filesize' => '',
-      'description_field' => 0,
-
-    ];
+    $settings['file_extensions'] = 'gpx';
 
     return $settings;
   }
@@ -46,23 +38,23 @@ class GpxFile extends FileItem {
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
     $properties = parent::propertyDefinitions($field_definition);
 
-    $properties['fid'] = MapDataDefinition::create()
-      ->setLabel(t('Fid'));
-
-    $properties['elevation'] = MapDataDefinition::create()
+    $properties['elevation'] = DataDefinition::create('any')
       ->setLabel(t('Elevation'));
 
-    $properties['demotion'] = MapDataDefinition::create()
+    $properties['demotion'] = DataDefinition::create('any')
       ->setLabel(t('Demotion'));
 
-    $properties['highest_point'] = MapDataDefinition::create()
+    $properties['highest_point'] = DataDefinition::create('any')
       ->setLabel(t('Highest point'));
 
-    $properties['lowest_point'] = MapDataDefinition::create()
+    $properties['lowest_point'] = DataDefinition::create('any')
       ->setLabel(t('Lowest point'));
 
-    $properties['distance'] = MapDataDefinition::create()
+    $properties['distance'] = DataDefinition::create('any')
       ->setLabel(t('Distance'));
+
+    $properties['points'] = DataDefinition::create('any')
+      ->setLabel(t('Points'));
 
     return $properties;
   }
@@ -73,51 +65,72 @@ class GpxFile extends FileItem {
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
     $schema = parent::schema($field_definition);
 
-    $schema['columns']['fid'] = [
-      'description' => 'The {file_managed}.fid being referenced in this field.',
-      'type' => 'int',
-      'not null' => FALSE,
-      'unsigned' => TRUE,
-    ];
-
     $schema['columns']['elevation'] = [
       'description' => 'The elevation of the trip.',
-      'type' => 'float',
+      'type' => 'numeric',
+      'precision' => 10,
+      'scale' => 2,
+      'not null' => TRUE,
+      'default' => 0
     ];
 
     $schema['columns']['demotion'] = [
       'description' => 'The reduction of the trip.',
-      'type' => 'float',
+      'type' => 'numeric',
+      'precision' => 10,
+      'scale' => 2,
+      'not null' => TRUE,
+      'default' => 0
     ];
 
     $schema['columns']['highest_point'] = [
       'description' => 'The highest point of the trip.',
-      'type' => 'float',
+      'type' => 'numeric',
+      'precision' => 10,
+      'scale' => 2,
+      'not null' => TRUE,
+      'default' => 0
     ];
 
     $schema['columns']['lowest_point'] = [
       'description' => 'The lowest point of the trip.',
-      'type' => 'float',
+      'type' => 'numeric',
+      'precision' => 10,
+      'scale' => 2,
+      'not null' => TRUE,
+      'default' => 0
     ];
 
     $schema['columns']['distance'] = [
       'description' => 'The distance of the trip.',
-      'type' => 'float',
+      'type' => 'numeric',
       'unsigned' => TRUE,
+      'precision' => 10,
+      'scale' => 2,
+      'not null' => TRUE,
+      'default' => 0
     ];
 
-    $schema['indexes'] = [
-      'target_id' => 'target_id',
-    ];
-
-    $schema['foreign keys'] = [
-      'fid' => [
-        'table' => 'file_managed',
-        'columns' => ['fid' => 'fid'],
-      ]
+    $schema['columns']['points'] = [
+      'description' => 'All the coordinates of the trip.',
+      'type' => 'blob',
+      'size' => 'big',
+      'not null' => FALSE,
+      'serialize' => TRUE,
     ];
 
     return $schema;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function fieldSettingsForm(array $form, FormStateInterface $form_state) {
+    // Disable allowed file extensions.
+    $element = parent::fieldSettingsForm($form, $form_state);
+    $element['file_extensions']['#disabled'] = TRUE;
+
+    return $element;
   }
 }
 
