@@ -1,6 +1,8 @@
 <?php
 
 namespace Drupal\gpx_field\Plugin\Field\FieldWidget;
+use DOMDocument;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\Entity\File;
 use Drupal\file\Plugin\Field\FieldWidget\FileWidget;
@@ -17,17 +19,56 @@ use Drupal\file\Plugin\Field\FieldWidget\FileWidget;
  * )
  */
 class GpxFileWidget extends FileWidget {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+
+    $element = parent::formElement($items, $delta, $element, $form, $form_state);
+
+    $element['elevation'] = array(
+      '#title' => t('Elevation'),
+      '#type' => 'number',
+      '#default_value' => isset($items[$delta]->elevation) ? $items[$delta]->elevation : NULL,
+    );
+    $element['demotion'] = array(
+      '#title' => t('Demotion'),
+      '#type' => 'number',
+      '#default_value' => isset($items[$delta]->demotion) ? $items[$delta]->demotion : NULL,
+    );
+    $element['higest_point'] = array(
+      '#title' => t('Higest point'),
+      '#type' => 'number',
+      '#default_value' => isset($items[$delta]->higest_point) ? $items[$delta]->higest_point : NULL,
+    );
+
+    $element['lowest_point'] = array(
+      '#title' => t('Lowest point'),
+      '#type' => 'number',
+      '#default_value' => isset($items[$delta]->lowest_point) ? $items[$delta]->lowest_point : NULL,
+    );
+
+    $element['distance'] = array(
+      '#title' => t('Distance'),
+      '#type' => 'number',
+      '#default_value' => isset($items[$delta]->distance) ? $items[$delta]->distance : NULL,
+    );
+
+    return $element;
+  }
+
   /**
    * {@inheritdoc}
    */
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
     $values = parent::massageFormValues($values, $form, $form_state);
-    kint($values);
+
     foreach ($values as $delta => &$value) {
       if(isset($value['target_id']) && $value['target_id'] !== NULL) {
         $gpx_file = File::load($value['target_id']);
-        $gpx_details = gpx_field_get_gpx_file_details($gpx_file);
-        //dsm($gpx_details);
+        $gpx_details = $this->gpx_field_get_gpx_file_details($gpx_file);
+        dsm($gpx_details);
       }
     }
   }
@@ -50,7 +91,7 @@ class GpxFileWidget extends FileWidget {
    *   - difficulty_array
    *   - points
    */
-  protected function gpx_field_get_gpx_file_details($gpx_file) {
+  protected function gpx_field_get_gpx_file_details(File $gpx_file) {
     // Always store the previous trackpoint.
     $point_before = NULL;
     // Iterator number.
@@ -82,11 +123,9 @@ class GpxFileWidget extends FileWidget {
     $ele_array = array();
     $points = array();
 
-    //dsm($gpx_file);
-
     // Load the uploaded file.
     $doc = new DOMDocument();
-    $doc->load($gpx_file->uri);
+    $doc->load($gpx_file->getFileUri());
 
     // Get all trackpoint and iterate them.
     $trackpoints = $doc->getElementsByTagName('trkpt');

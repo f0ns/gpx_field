@@ -46,6 +46,9 @@ class GpxFile extends FileItem {
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
     $properties = parent::propertyDefinitions($field_definition);
 
+    $properties['fid'] = MapDataDefinition::create()
+      ->setLabel(t('Fid'));
+
     $properties['elevation'] = MapDataDefinition::create()
       ->setLabel(t('Elevation'));
 
@@ -69,6 +72,13 @@ class GpxFile extends FileItem {
    */
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
     $schema = parent::schema($field_definition);
+
+    $schema['columns']['fid'] = [
+      'description' => 'The {file_managed}.fid being referenced in this field.',
+      'type' => 'int',
+      'not null' => FALSE,
+      'unsigned' => TRUE,
+    ];
 
     $schema['columns']['elevation'] = [
       'description' => 'The elevation of the trip.',
@@ -94,6 +104,17 @@ class GpxFile extends FileItem {
       'description' => 'The distance of the trip.',
       'type' => 'float',
       'unsigned' => TRUE,
+    ];
+
+    $schema['indexes'] = [
+      'target_id' => 'target_id',
+    ];
+
+    $schema['foreign keys'] = [
+      'fid' => [
+        'table' => 'file_managed',
+        'columns' => ['fid' => 'fid'],
+      ]
     ];
 
     return $schema;
