@@ -2,6 +2,7 @@
 
 namespace Drupal\gpx_field;
 
+use Drupal\Core\StreamWrapper\StreamWrapperManagerInterface;
 use Drupal\file\Entity\File;
 use phpGPX\phpGPX;
 
@@ -11,6 +12,7 @@ use phpGPX\phpGPX;
  */
 class GpxAnalyser {
 
+  protected $streamWrapper;
   protected $elevation;
   protected $demotion;
   protected $highestPoint;
@@ -22,7 +24,8 @@ class GpxAnalyser {
    * GpxAnalyser constructor.
    * @param \Drupal\file\Entity\File $gpx_xml
    */
-  public function __construct(File $gpx_xml) {
+  public function __construct(File $gpx_xml, StreamWrapperManagerInterface $stream_wrapper_manager) {
+    $this->streamWrapper = $stream_wrapper_manager->getViaUri($gpx_xml->getFileUri());
     $this->elevation = 0;
     $this->demotion = 0;
     $this->lowestPoint = 0;
@@ -31,6 +34,18 @@ class GpxAnalyser {
     $this->coordinates = [];
     // Set all stats.
     $this->setStats($gpx_xml);
+  }
+
+  /**
+   * Creates new instance of this class.
+   * @param \Drupal\file\Entity\File $gpx_xml
+   * @return static
+   */
+  public static function create(File $gpx_xml) {
+    /** @var StreamWrapperManagerInterface $manager */
+    $container = \Drupal::getContainer();
+    $manager = $container->get('stream_wrapper_manager');
+    return new static($gpx_xml, $manager);
   }
 
   /**
@@ -81,8 +96,7 @@ class GpxAnalyser {
    */
   protected function setStats(File $gpx_xml) {
     $gpx = new phpGPX();
-    $stream_wrapper_manager = \Drupal::service('stream_wrapper_manager')->getViaUri($gpx_xml->getFileUri());
-    $file_path = $stream_wrapper_manager->realpath();
+    $file_path = $this->streamWrapper->realpath();
     $file = $gpx->load($file_path);
 
     $previous_elevation = 0;

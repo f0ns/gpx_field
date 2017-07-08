@@ -37,7 +37,7 @@ class GpxFileWidget extends FileWidget {
       if (!empty($value['target_id'])) {
         // Load the gpx file.
         if ($gpx = File::load($value['target_id'])) {
-          $analyser = new GpxAnalyser($gpx);
+          $analyser = GpxAnalyser::create($gpx);
           $value['elevation'] = $analyser->getElevation();
           $value['demotion'] = $analyser->getDemotion();
           $value['highest_point'] = $analyser->getHighestPoint();
