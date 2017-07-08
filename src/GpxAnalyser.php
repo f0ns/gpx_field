@@ -81,7 +81,9 @@ class GpxAnalyser {
    */
   protected function setStats(File $gpx_xml) {
     $gpx = new phpGPX();
-    $file = $gpx->load($gpx_xml->getFileUri());
+    $stream_wrapper_manager = \Drupal::service('stream_wrapper_manager')->getViaUri($gpx_xml->getFileUri());
+    $file_path = $stream_wrapper_manager->realpath();
+    $file = $gpx->load($file_path);
 
     $previous_elevation = 0;
 
@@ -102,7 +104,7 @@ class GpxAnalyser {
         // Add coordinate to array.
         array_push($this->coordinates, [
           'lat' => $point->latitude,
-          'lng' => $point->longitude
+          'lon' => $point->longitude
         ]);
 
         $previous_elevation = $point->elevation;

@@ -5,7 +5,7 @@ namespace Drupal\gpx_field\Plugin\Field\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
+use Drupal\leaflet\Plugin\Field\FieldFormatter\LeafletDefaultFormatter;
 
 /**
  * Plugin implementation of the 'GpxTextFormatter' formatter.
@@ -18,7 +18,7 @@ use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
  *   }
  * )
  */
-class GpxTextFormatter extends FormatterBase {
+class GpxTextFormatter extends LeafletDefaultFormatter {
 
   /**
    * {@inheritdoc}
@@ -41,9 +41,42 @@ class GpxTextFormatter extends FormatterBase {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
+
+    $settings = $this->getSettings();
+    $icon_url = $settings['icon']['icon_url'];
+
+    $map = leaflet_map_get_info($settings['leaflet_map']);
+    $map['settings']['zoom'] = isset($settings['zoom']) ? $settings['zoom'] : NULL;
+    $map['settings']['minZoom'] = isset($settings['minZoom']) ? $settings['minZoom'] : NULL;
+    $map['settings']['maxZoom'] = isset($settings['zoom']) ? $settings['maxZoom'] : NULL;
+
     $elements = [];
-    foreach ($items as $delta => &$item) {
+
+    foreach ($items as $delta => $item) {
+
+     $features = array(
+        array(
+          'type' => 'linestring',
+          'points' => $item->points,
+        )
+      );
+      // If only a single feature, set the popup content to the entity title.
+      if ($settings['popup'] && count($items) == 1) {
+        $features[0]['popup'] = $items->getEntity()->label();
+      }
+      if (!empty($icon_url)) {
+        foreach ($features as $key => $feature) {
+          $features[$key]['icon'] = $settings['icon'];
+        }
+      }
+
       $elements[$delta] = [
+        'map' => [
+          '#type' => 'inline_template',
+          '#template' => render(leaflet_render_map($map, $features, $settings['height'] . 'px')),
+          '#prefix' => '<div>',
+          '#suffix' => '</div>',
+        ],
         'elevation' => [
           '#type' => 'inline_template',
           '#template' => '<label>' . $this->t('Elevation') . '</label><span>' . $item->elevation . 'm</span>',
@@ -70,7 +103,7 @@ class GpxTextFormatter extends FormatterBase {
         ],
         'distance' => [
           '#type' => 'inline_template',
-          '#template' => '<label>' . $this->t('Distance') . '</label><span>' . $item->distance . 'm</span>',
+          '#template' => '<label>' . $this->t('Distance') . '</label><span>' . round($item->distance / 1000, 2) . 'km</span>',
           '#prefix' => '<div>',
           '#suffix' => '</div>',
         ],
@@ -82,10 +115,6 @@ class GpxTextFormatter extends FormatterBase {
         ],
       ];
     }
-
-
     return $elements;
-
   }
-
 }

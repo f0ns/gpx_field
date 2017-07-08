@@ -2,4 +2,6 @@ name: GPX field
 type: module
 description: Enables to upload GPX files and generates maps ang graphs from it
 core: 8.x
+dependencies:
+- leaflet:leaflet
 package: Fields
