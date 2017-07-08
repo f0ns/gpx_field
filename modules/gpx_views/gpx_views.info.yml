@@ -1,0 +1,8 @@
+name: GPX views
+type: module
+description: Enables to show GPX data in views
+core: 8.x
+dependencies:
+- gpx_field:gpx_field
+- leaflet_views:leaflet_views
+package: Views

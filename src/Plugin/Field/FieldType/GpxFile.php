@@ -16,7 +16,7 @@ use Drupal\file\Plugin\Field\FieldType\FileItem;
  *   description = @Translation("This field stores a GPX file"),
  *   category = @Translation("Reference"),
  *   default_widget = "gpx_file",
- *   default_formatter = "gpx_text",
+ *   default_formatter = "gpx_map",
  *   list_class = "\Drupal\file\Plugin\Field\FieldType\FileFieldItemList",
  *   constraints = {"ReferenceAccess" = {}, "FileValidation" = {}}
  * )
