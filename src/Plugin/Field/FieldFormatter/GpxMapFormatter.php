@@ -8,17 +8,17 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\leaflet\Plugin\Field\FieldFormatter\LeafletDefaultFormatter;
 
 /**
- * Plugin implementation of the 'GpxTextFormatter' formatter.
+ * Plugin implementation of the 'GpxMapFormatter' formatter.
  *
  * @FieldFormatter(
- *   id = "gpx_text",
- *   label = @Translation("Show gpx data as text"),
+ *   id = "gpx_map",
+ *   label = @Translation("Show gpx data on a map"),
  *   field_types = {
  *     "gpx_file"
  *   }
  * )
  */
-class GpxTextFormatter extends LeafletDefaultFormatter {
+class GpxMapFormatter extends LeafletDefaultFormatter {
 
   /**
    * {@inheritdoc}
@@ -54,7 +54,7 @@ class GpxTextFormatter extends LeafletDefaultFormatter {
 
     foreach ($items as $delta => $item) {
 
-     $features = array(
+      $features = array(
         array(
           'type' => 'linestring',
           'points' => $item->points,
