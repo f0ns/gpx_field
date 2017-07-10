@@ -72,6 +72,7 @@ class GpxMapFormatter extends LeafletDefaultFormatter {
 
       $elements[$delta] = [
         'map' => leaflet_render_map($map, $features, $settings['height'] . 'px'),
+
         'elevation' => [
           '#type' => 'inline_template',
           '#template' => '<label>' . $this->t('Elevation') . '</label><span>' . $item->elevation . 'm</span>',
