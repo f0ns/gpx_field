@@ -1,0 +1,9 @@
+<?php
+
+function gpx_field_theme($existing, $type, $theme, $path) {
+  return [
+    'gpx_metadata' => [
+      'variables' => ['elevation' => NULL, 'demotion' => NULL, 'lowest_point' => NULL, 'highest_point' => NULL, 'distance' => NULL, 'points' => NULL],
+    ],
+  ];
+}

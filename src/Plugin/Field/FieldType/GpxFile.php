@@ -38,19 +38,19 @@ class GpxFile extends FileItem {
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
     $properties = parent::propertyDefinitions($field_definition);
 
-    $properties['elevation'] = DataDefinition::create('any')
+    $properties['elevation'] = DataDefinition::create('float')
       ->setLabel(t('Elevation'));
 
-    $properties['demotion'] = DataDefinition::create('any')
+    $properties['demotion'] = DataDefinition::create('float')
       ->setLabel(t('Demotion'));
 
-    $properties['highest_point'] = DataDefinition::create('any')
+    $properties['highest_point'] = DataDefinition::create('float')
       ->setLabel(t('Highest point'));
 
-    $properties['lowest_point'] = DataDefinition::create('any')
+    $properties['lowest_point'] = DataDefinition::create('float')
       ->setLabel(t('Lowest point'));
 
-    $properties['distance'] = DataDefinition::create('any')
+    $properties['distance'] = DataDefinition::create('float')
       ->setLabel(t('Distance'));
 
     $properties['points'] = DataDefinition::create('any')

@@ -206,8 +206,9 @@ class LeafletLinestring extends RowPluginBase implements ContainerFactoryPluginI
           'type' => 'linestring',
           'points' => $points,
           'options' => array(
-            'color' => $this->rand_color()
-          )
+            'color' => '#2d5be3'
+          ),
+          'popup' => $entity->getTitle(),
         )
       );
     }
@@ -225,9 +226,5 @@ class LeafletLinestring extends RowPluginBase implements ContainerFactoryPluginI
       $errors[] = $this->t('Row @row requires the data source to be configured.', array('@row' => $this->definition['title']));
     }
     return $errors;
-  }
-
-  public function rand_color() {
-    return '#' . str_pad(dechex(mt_rand(0, 0xFFFFFF)), 6, '0', STR_PAD_LEFT);
   }
 }
