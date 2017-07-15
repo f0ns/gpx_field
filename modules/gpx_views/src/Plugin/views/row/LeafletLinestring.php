@@ -200,8 +200,14 @@ class LeafletLinestring extends RowPluginBase implements ContainerFactoryPluginI
 
     if (isset($entity->$datasource->points)) {
       $points = $entity->$datasource->points;
+      $amount_of_points = count($points);
 
       $data = array(
+        array(
+          'type' => 'point',
+          'lat' => $points[0]['lat'],
+          'lon' => $points[0]['lon'],
+        ),
         array(
           'type' => 'linestring',
           'points' => $points,
@@ -209,7 +215,12 @@ class LeafletLinestring extends RowPluginBase implements ContainerFactoryPluginI
             'color' => '#2d5be3'
           ),
           'popup' => $entity->getTitle(),
-        )
+        ),
+        array(
+          'type' => 'point',
+          'lat' => $points[$amount_of_points-1]['lat'],
+          'lon' => $points[$amount_of_points-1]['lon'],
+        ),
       );
     }
 

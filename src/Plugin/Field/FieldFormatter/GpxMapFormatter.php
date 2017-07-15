@@ -54,7 +54,14 @@ class GpxMapFormatter extends LeafletDefaultFormatter {
 
     foreach ($items as $delta => $item) {
 
+      $amount_of_points = count($item->points);
+
       $features = array(
+        array(
+          'type' => 'point',
+          'lat' => $item->points[0]['lat'],
+          'lon' => $item->points[0]['lon'],
+        ),
         array(
           'type' => 'linestring',
           'points' => $item->points,
@@ -62,7 +69,12 @@ class GpxMapFormatter extends LeafletDefaultFormatter {
           'options' => array(
             'color' => '#2d5be3'
           ),
-        )
+        ),
+        array(
+          'type' => 'point',
+          'lat' => $item->points[$amount_of_points-1]['lat'],
+          'lon' => $item->points[$amount_of_points-1]['lon'],
+        ),
       );
 
       if (!empty($icon_url)) {
@@ -79,7 +91,7 @@ class GpxMapFormatter extends LeafletDefaultFormatter {
           '#demotion' => $item->demotion,
           '#lowest_point' => $item->lowest_point,
           '#highest_point' => $item->higehst_point,
-          '#distance' => $item->distance,
+          '#distance' => round($item->distance / 1000, 2),
           '#points' => count($item->points),
         ]
       ];
