@@ -5,6 +5,7 @@ namespace Drupal\gpx_field\Plugin\Field\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\highcharts\Highchart;
 use Drupal\leaflet\Plugin\Field\FieldFormatter\LeafletDefaultFormatter;
 
 /**
@@ -25,7 +26,6 @@ class GpxMapFormatter extends LeafletDefaultFormatter {
    */
   public static function defaultSettings() {
     return [
-
       ] + parent::defaultSettings();
   }
 
@@ -56,26 +56,34 @@ class GpxMapFormatter extends LeafletDefaultFormatter {
 
       $amount_of_points = count($item->points);
 
-      $features = array(
-        array(
+      $features = [
+        [
           'type' => 'point',
           'lat' => $item->points[0]['lat'],
           'lon' => $item->points[0]['lon'],
-        ),
-        array(
+          'icon' => [
+            'iconUrl' => '/' . drupal_get_path('module', 'gpx_field') . '/images/start.png',
+            'iconSize' => [17, 17],
+          ]
+        ],
+        [
           'type' => 'linestring',
           'points' => $item->points,
           'popup' => $items->getEntity()->label(),
-          'options' => array(
+          'options' => [
             'color' => '#2d5be3'
-          ),
-        ),
-        array(
+          ],
+        ],
+        [
           'type' => 'point',
-          'lat' => $item->points[$amount_of_points-1]['lat'],
-          'lon' => $item->points[$amount_of_points-1]['lon'],
-        ),
-      );
+          'lat' => $item->points[$amount_of_points - 1]['lat'],
+          'lon' => $item->points[$amount_of_points - 1]['lon'],
+          'icon' => [
+            'iconUrl' => '/' . drupal_get_path('module', 'gpx_field') . '/images/finish.png',
+            'iconSize' => [17, 17],
+          ],
+        ],
+      ];
 
       if (!empty($icon_url)) {
         foreach ($features as $key => $feature) {
@@ -83,19 +91,82 @@ class GpxMapFormatter extends LeafletDefaultFormatter {
         }
       }
 
+      $elevation_profile_chart_options = $this->getChartOptions($item);
+      $elevation_profile_chart_series = $this->getChartSeries($item);
+
+      $elevation_profile_chart = new Highchart($elevation_profile_chart_options, $elevation_profile_chart_series);
+
+      $gpx_file = \Drupal\file\Entity\File::load($item->target_id);
+      $gpx_file_url = file_create_url($gpx_file->getFileUri());
+
       $elements[$delta] = [
-        'map' => leaflet_render_map($map, $features, $settings['height'] . 'px'),
-        'metadata' => [
-          '#theme' => 'gpx_metadata',
+        'gpx_map' => [
+          '#theme' => 'gpx_map',
           '#elevation' => $item->elevation,
           '#demotion' => $item->demotion,
           '#lowest_point' => $item->lowest_point,
-          '#highest_point' => $item->higehst_point,
+          '#highest_point' => $item->highest_point,
           '#distance' => round($item->distance / 1000, 2),
           '#points' => count($item->points),
-        ]
+          '#gpx_file' => $gpx_file_url,
+        ],
+        'map' => leaflet_render_map($map, $features, $settings['height'] . 'px'),
+        'elevation_profile' => $elevation_profile_chart->render(),
       ];
     }
+
     return $elements;
   }
+
+  protected function getChartOptions($item) {
+    $options = [];
+
+    $options = [
+      'title' => [
+        'text' => '',
+      ],
+      'xAxis' => [
+        'title' => [
+          'text' => $this->t('Distance')
+        ],
+        'labels' => [
+          'formatter' => 'function () { return this.value + \'km\'; }'
+        ]
+      ],
+      'yAxis' => [
+        'title' => [
+          'text' => $this->t('Elevation')
+        ],
+        'labels' => [
+          'formatter' => 'function () { return this.value + \'m\'; }'
+        ]
+      ],
+      'colors' => ['#204dcc'],
+      'tooltip' => [
+        'headerFormat' => '',
+        'pointFormat' => $this->t('Elevation').': {point.y:,.0f}m<br/>'.$this->t('Distance').': {point.x:.1f}km'
+      ],
+      'legend' => [
+        'enabled' => FALSE
+      ]
+    ];
+
+    return $options;
+  }
+
+  protected function getChartSeries($item) {
+    $series = [];
+
+    $series = [
+      [
+        'type' => 'area',
+        'name' => 'Elevation',
+        'data' => $item->elevation_profile
+      ]
+    ];
+
+    return $series;
+  }
+
 }
+

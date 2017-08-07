@@ -85,7 +85,7 @@ class GpxTextFormatter extends FormatterBase {
         $elements[$delta] = [
           'elevation' => [
             '#type' => 'inline_template',
-            '#template' => '<label>' . $this->t('Elevation') . '</label><p>' . $item->elevation . 'm</p>',
+            '#template' => '<label>' . $this->t('Elevation') . '</label><div>' . $item->elevation . 'm</div>',
             '#prefix' => '<div>',
             '#suffix' => '</div>',
           ]
@@ -96,7 +96,7 @@ class GpxTextFormatter extends FormatterBase {
         $elements[$delta] = [
           'demotion' => [
             '#type' => 'inline_template',
-            '#template' => '<label>' . $this->t('Demotion') . '</label><p>' . $item->demotion . 'm</p>',
+            '#template' => '<label>' . $this->t('Demotion') . '</label><div>' . $item->demotion . 'm</div>',
             '#prefix' => '<div>',
             '#suffix' => '</div>',
           ]
@@ -107,7 +107,7 @@ class GpxTextFormatter extends FormatterBase {
         $elements[$delta] = [
           'lowest_point' => [
             '#type' => 'inline_template',
-            '#template' => '<label>' . $this->t('Lowest point') . '</label><p>' . $item->lowest_point . 'm</span>',
+            '#template' => '<label>' . $this->t('Lowest point') . '</label><div>' . $item->lowest_point . 'm</div>',
             '#prefix' => '<div>',
             '#suffix' => '</div>',
           ]
@@ -118,7 +118,7 @@ class GpxTextFormatter extends FormatterBase {
         $elements[$delta] = [
           'highest_point' => [
             '#type' => 'inline_template',
-            '#template' => '<label>' . $this->t('Highest point') . '</label><p>' . $item->highest_point . 'm</p>',
+            '#template' => '<label>' . $this->t('Highest point') . '</label><div>' . $item->highest_point . 'm</div>',
             '#prefix' => '<div>',
             '#suffix' => '</div>',
           ]
@@ -129,7 +129,7 @@ class GpxTextFormatter extends FormatterBase {
         $elements[$delta] = [
           'demotion' => [
             '#type' => 'inline_template',
-            '#template' => '<label>' . $this->t('Distance') . '</label><p>' . round($item->distance/1000,2) . 'km</p>',
+            '#template' => '<label>' . $this->t('Distance') . '</label><div>' . round($item->distance/1000,2) . 'km</div>',
             '#prefix' => '<div>',
             '#suffix' => '</div>',
           ]
@@ -140,7 +140,7 @@ class GpxTextFormatter extends FormatterBase {
         $elements[$delta] = [
           'demotion' => [
             '#type' => 'inline_template',
-            '#template' => '<label>' . $this->t('Points') . '</label><p>' . count($item->points) . '</p>',
+            '#template' => '<label>' . $this->t('Points') . '</label><div>' . count($item->points) . '</div>',
             '#prefix' => '<div>',
             '#suffix' => '</div>',
           ]

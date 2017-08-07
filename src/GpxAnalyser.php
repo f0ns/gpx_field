@@ -19,6 +19,7 @@ class GpxAnalyser {
   protected $lowestPoint;
   protected $distance;
   protected $coordinates;
+  protected $heightProfile;
 
   /**
    * GpxAnalyser constructor.
@@ -32,6 +33,7 @@ class GpxAnalyser {
     $this->highestPoint = 0;
     $this->distance = 0;
     $this->coordinates = [];
+    $this->elevationProfile = [];
     // Set all stats.
     $this->setStats($gpx_xml);
   }
@@ -91,6 +93,13 @@ class GpxAnalyser {
   }
 
   /**
+   * @return array
+   */
+  public function getElevationProfile() {
+    return $this->elevationProfile;
+  }
+
+  /**
    * Calculates all stats from gpx file.
    * @param \Drupal\file\Entity\File $gpx_xml
    */
@@ -115,11 +124,14 @@ class GpxAnalyser {
           $this->demotion += ($point->elevation - $previous_elevation);
         }
 
-        // Add coordinate to array.
+        // Add coordinate to coordinates array.
         array_push($this->coordinates, [
           'lat' => $point->latitude,
           'lon' => $point->longitude
         ]);
+
+        // Add the distance and elevation the the elevation profile.
+        array_push($this->elevationProfile, [$point->distance/1000, $point->elevation]);
 
         $previous_elevation = $point->elevation;
       }

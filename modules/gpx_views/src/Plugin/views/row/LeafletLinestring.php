@@ -202,26 +202,36 @@ class LeafletLinestring extends RowPluginBase implements ContainerFactoryPluginI
       $points = $entity->$datasource->points;
       $amount_of_points = count($points);
 
-      $data = array(
-        array(
+      $data = [
+        [
           'type' => 'point',
           'lat' => $points[0]['lat'],
           'lon' => $points[0]['lon'],
-        ),
-        array(
+          'icon' => [
+            'iconUrl' => '/' . drupal_get_path('module', 'gpx_field') . '/images/start.png',
+            'iconSize' => [17, 17],
+            'iconAnchor' => [-17, -17]
+          ]
+        ],
+        [
           'type' => 'linestring',
           'points' => $points,
-          'options' => array(
+          'options' => [
             'color' => '#2d5be3'
-          ),
+          ],
           'popup' => $entity->getTitle(),
-        ),
-        array(
+        ],
+        [
           'type' => 'point',
-          'lat' => $points[$amount_of_points-1]['lat'],
-          'lon' => $points[$amount_of_points-1]['lon'],
-        ),
-      );
+          'lat' => $points[$amount_of_points - 1]['lat'],
+          'lon' => $points[$amount_of_points - 1]['lon'],
+          'icon' => [
+            'iconUrl' => '/' . drupal_get_path('module', 'gpx_field') . '/images/finish.png',
+            'iconSize' => [17, 17],
+            'iconAnchor' => [-17, -17]
+          ]
+        ],
+      ];
     }
 
     return $data;

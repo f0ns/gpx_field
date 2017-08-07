@@ -34,6 +34,7 @@ class GpxFileWidget extends FileWidget {
       $value['lowest_point'] = 0;
       $value['distance'] = 0;
       $value['points'] = [];
+      $value['elevation_profile'] = [];
       if (!empty($value['target_id'])) {
         // Load the gpx file.
         if ($gpx = File::load($value['target_id'])) {
@@ -44,6 +45,7 @@ class GpxFileWidget extends FileWidget {
           $value['lowest_point'] = $analyser->getLowestPoint();
           $value['distance'] = $analyser->getDistance();
           $value['points'] = $analyser->getCoordinates();
+          $value['elevation_profile'] = $analyser->getElevationProfile();
         }
       }
     }
