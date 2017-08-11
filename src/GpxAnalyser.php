@@ -131,7 +131,10 @@ class GpxAnalyser {
         ]);
 
         // Add the distance and elevation the the elevation profile.
-        array_push($this->elevationProfile, [$point->distance/1000, $point->elevation]);
+        array_push($this->elevationProfile, [
+          $point->distance / 1000,
+          $point->elevation
+        ]);
 
         $previous_elevation = $point->elevation;
       }

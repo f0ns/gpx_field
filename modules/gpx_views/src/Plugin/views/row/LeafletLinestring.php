@@ -153,8 +153,8 @@ class LeafletLinestring extends RowPluginBase implements ContainerFactoryPluginI
 
     // Get a list of fields and a sublist of geo data fields in this view.
     // @todo use $fields = $this->displayHandler->getFieldLabels();
-    $fields = array();
-    $fields_gpx_data = array();
+    $fields = [];
+    $fields_gpx_data = [];
     foreach ($this->displayHandler->getHandlers('field') as $field_id => $handler) {
 
       $label = $handler->adminLabel() ?: $field_id;
@@ -171,21 +171,21 @@ class LeafletLinestring extends RowPluginBase implements ContainerFactoryPluginI
 
     // Check whether we have a geo data field we can work with.
     if (!count($fields_gpx_data)) {
-      $form['error'] = array(
+      $form['error'] = [
         '#markup' => $this->t('Please add at least one gpx file field to the view.'),
-      );
+      ];
       return;
     }
 
     // Map preset.
-    $form['data_source'] = array(
+    $form['data_source'] = [
       '#type' => 'select',
       '#title' => $this->t('Data Source'),
       '#description' => $this->t('Which field contains the gpx data?'),
       '#options' => $fields_gpx_data,
       '#default_value' => $this->options['data_source'],
       '#required' => TRUE,
-    );
+    ];
   }
 
   /**
@@ -244,7 +244,7 @@ class LeafletLinestring extends RowPluginBase implements ContainerFactoryPluginI
     $errors = parent::validate();
     // @todo raise validation error if we have no geofield.
     if (empty($this->options['data_source'])) {
-      $errors[] = $this->t('Row @row requires the data source to be configured.', array('@row' => $this->definition['title']));
+      $errors[] = $this->t('Row @row requires the data source to be configured.', ['@row' => $this->definition['title']]);
     }
     return $errors;
   }

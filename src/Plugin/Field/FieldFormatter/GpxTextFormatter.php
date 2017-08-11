@@ -1,9 +1,11 @@
 <?php
 namespace Drupal\gpx_field\Plugin\Field\FieldFormatter;
+
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
+
 /**
  * Plugin implementation of the 'GpxTextFormatter' formatter.
  *
@@ -33,12 +35,19 @@ class GpxTextFormatter extends FormatterBase {
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $element = parent::settingsForm($form, $form_state);
 
-    $element['visible_gpx_data'] = array(
+    $element['visible_gpx_data'] = [
       '#title' => t('What GPX data should be visible?'),
       '#type' => 'checkboxes',
-      '#options' => array('elevation' => $this->t('Elevation'), 'demotion' => $this->t('Demotion'), 'lowest_point' => $this->t('Lowest point'), 'highest_point' => $this->t('Highest point'), 'distance' => $this->t('Distance'), 'points' => $this->t('Points')),
+      '#options' => [
+        'elevation' => $this->t('Elevation'),
+        'demotion' => $this->t('Demotion'),
+        'lowest_point' => $this->t('Lowest point'),
+        'highest_point' => $this->t('Highest point'),
+        'distance' => $this->t('Distance'),
+        'points' => $this->t('Points')
+      ],
       '#default_value' => $this->getSetting('visible_gpx_data'),
-    );
+    ];
 
     return $element;
   }
@@ -47,19 +56,19 @@ class GpxTextFormatter extends FormatterBase {
    * {@inheritdoc}
    */
   public function settingsSummary() {
-    $summary = array();
+    $summary = [];
 
-    if($this->getSetting('visible_gpx_data')) {
+    if ($this->getSetting('visible_gpx_data')) {
 
       $visible_gpx_data = [];
 
-      foreach($this->getSetting(visible_gpx_data) as $key => $value) {
-        if($value) {
+      foreach ($this->getSetting(visible_gpx_data) as $key => $value) {
+        if ($value) {
           $visible_gpx_data[] = $value;
         }
       }
 
-      $summary[] = t('Visible GPX data: @visible_gpx_data', array('@visible_gpx_data' => implode(', ', $visible_gpx_data)));
+      $summary[] = t('Visible GPX data: @visible_gpx_data', ['@visible_gpx_data' => implode(', ', $visible_gpx_data)]);
     }
 
     return $summary;
@@ -75,13 +84,13 @@ class GpxTextFormatter extends FormatterBase {
       $visible_gpx_data = [];
       $visible = $this->getSetting('visible_gpx_data');
 
-      foreach($visible as $key => $value) {
-        if($value) {
+      foreach ($visible as $key => $value) {
+        if ($value) {
           $visible_gpx_data[] = $value;
         }
       }
 
-      if(in_array('elevation', $visible_gpx_data)) {
+      if (in_array('elevation', $visible_gpx_data)) {
         $elements[$delta] = [
           'elevation' => [
             '#type' => 'inline_template',
@@ -92,7 +101,7 @@ class GpxTextFormatter extends FormatterBase {
         ];
       }
 
-      if(in_array('demotion', $visible_gpx_data)) {
+      if (in_array('demotion', $visible_gpx_data)) {
         $elements[$delta] = [
           'demotion' => [
             '#type' => 'inline_template',
@@ -103,7 +112,7 @@ class GpxTextFormatter extends FormatterBase {
         ];
       }
 
-      if(in_array('lowest_point', $visible_gpx_data)) {
+      if (in_array('lowest_point', $visible_gpx_data)) {
         $elements[$delta] = [
           'lowest_point' => [
             '#type' => 'inline_template',
@@ -114,7 +123,7 @@ class GpxTextFormatter extends FormatterBase {
         ];
       }
 
-      if(in_array('highest_point', $visible_gpx_data)) {
+      if (in_array('highest_point', $visible_gpx_data)) {
         $elements[$delta] = [
           'highest_point' => [
             '#type' => 'inline_template',
@@ -125,18 +134,18 @@ class GpxTextFormatter extends FormatterBase {
         ];
       }
 
-      if(in_array('distance', $visible_gpx_data)) {
+      if (in_array('distance', $visible_gpx_data)) {
         $elements[$delta] = [
           'demotion' => [
             '#type' => 'inline_template',
-            '#template' => '<label>' . $this->t('Distance') . '</label><div>' . round($item->distance/1000,2) . 'km</div>',
+            '#template' => '<label>' . $this->t('Distance') . '</label><div>' . round($item->distance / 1000, 2) . 'km</div>',
             '#prefix' => '<div>',
             '#suffix' => '</div>',
           ]
         ];
       }
 
-      if(in_array('points', $visible_gpx_data)) {
+      if (in_array('points', $visible_gpx_data)) {
         $elements[$delta] = [
           'demotion' => [
             '#type' => 'inline_template',
