@@ -68,62 +68,65 @@ class GpxFile extends FileItem {
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
     $schema = parent::schema($field_definition);
 
-    $schema['columns'] = [
-      'elevation' => [
-        'description' => 'The elevation of the route.',
-        'type' => 'numeric',
-        'precision' => 10,
-        'scale' => 2,
-        'not null' => TRUE,
-        'default' => 0
-      ],
-      'demotion' => [
-        'description' => 'The demotion of the route.',
-        'type' => 'numeric',
-        'precision' => 10,
-        'scale' => 2,
-        'not null' => TRUE,
-        'default' => 0
-      ],
-      'highest_point' => [
-        'description' => 'The highest point of the route.',
-        'type' => 'numeric',
-        'precision' => 10,
-        'scale' => 2,
-        'not null' => TRUE,
-        'default' => 0
-      ],
-      'lowest_point' => [
-        'description' => 'The lowest point of the route.',
-        'type' => 'numeric',
-        'precision' => 10,
-        'scale' => 2,
-        'not null' => TRUE,
-        'default' => 0
-      ],
-      'distance' => [
-        'description' => 'The distance of the route.',
-        'type' => 'numeric',
-        'unsigned' => TRUE,
-        'precision' => 10,
-        'scale' => 2,
-        'not null' => TRUE,
-        'default' => 0
-      ],
-      'points' => [
-        'description' => 'All the coordinates of the route.',
-        'type' => 'blob',
-        'size' => 'big',
-        'not null' => FALSE,
-        'serialize' => TRUE,
-      ],
-      'elevation_profile' => [
-        'description' => 'The elevation profile of the route.',
-        'type' => 'blob',
-        'size' => 'big',
-        'not null' => FALSE,
-        'serialize' => TRUE,
-      ]
+    $schema['columns']['elevation'] = [
+      'description' => 'The elevation of the route.',
+      'type' => 'numeric',
+      'precision' => 10,
+      'scale' => 2,
+      'not null' => TRUE,
+      'default' => 0
+    ];
+
+    $schema['columns']['demotion'] = [
+      'description' => 'The demotion of the route.',
+      'type' => 'numeric',
+      'precision' => 10,
+      'scale' => 2,
+      'not null' => TRUE,
+      'default' => 0
+    ];
+    $schema['columns']['highest_point'] = [
+      'description' => 'The highest point of the route.',
+      'type' => 'numeric',
+      'precision' => 10,
+      'scale' => 2,
+      'not null' => TRUE,
+      'default' => 0
+    ];
+
+    $schema['columns']['lowest_point'] = [
+      'description' => 'The lowest point of the route.',
+      'type' => 'numeric',
+      'precision' => 10,
+      'scale' => 2,
+      'not null' => TRUE,
+      'default' => 0
+    ];
+
+    $schema['columns']['distance'] = [
+      'description' => 'The distance of the route.',
+      'type' => 'numeric',
+      'unsigned' => TRUE,
+      'precision' => 10,
+      'scale' => 2,
+      'not null' => TRUE,
+      'default' => 0
+    ];
+
+    $schema['columns']['points'] = [
+      'description' => 'All the coordinates of the route.',
+      'type' => 'blob',
+      'size' => 'big',
+      'not null' => FALSE,
+      'serialize' => TRUE,
+    ];
+
+    $schema['columns']['elevation_profile'] = [
+      'description' => 'The elevation profile of the route.',
+      'type' => 'blob',
+      'size' => 'big',
+      'not null' => FALSE,
+      'serialize' => TRUE,
     ];
 
     return $schema;

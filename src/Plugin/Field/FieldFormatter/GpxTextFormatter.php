@@ -1,9 +1,12 @@
 <?php
+
 namespace Drupal\gpx_field\Plugin\Field\FieldFormatter;
+
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
+
 /**
  * Plugin implementation of the 'GpxTextFormatter' formatter.
  *
@@ -36,7 +39,14 @@ class GpxTextFormatter extends FormatterBase {
     $element['visible_gpx_data'] = array(
       '#title' => t('What GPX data should be visible?'),
       '#type' => 'checkboxes',
-      '#options' => array('elevation' => $this->t('Elevation'), 'demotion' => $this->t('Demotion'), 'lowest_point' => $this->t('Lowest point'), 'highest_point' => $this->t('Highest point'), 'distance' => $this->t('Distance'), 'points' => $this->t('Points')),
+      '#options' => array(
+        'elevation' => $this->t('Elevation'),
+        'demotion' => $this->t('Demotion'),
+        'lowest_point' => $this->t('Lowest point'),
+        'highest_point' => $this->t('Highest point'),
+        'distance' => $this->t('Distance'),
+        'points' => $this->t('Points')
+      ),
       '#default_value' => $this->getSetting('visible_gpx_data'),
     );
 
@@ -49,12 +59,12 @@ class GpxTextFormatter extends FormatterBase {
   public function settingsSummary() {
     $summary = array();
 
-    if($this->getSetting('visible_gpx_data')) {
+    if ($this->getSetting('visible_gpx_data')) {
 
       $visible_gpx_data = [];
 
-      foreach($this->getSetting(visible_gpx_data) as $key => $value) {
-        if($value) {
+      foreach ($this->getSetting(visible_gpx_data) as $key => $value) {
+        if ($value) {
           $visible_gpx_data[] = $value;
         }
       }
@@ -75,75 +85,63 @@ class GpxTextFormatter extends FormatterBase {
       $visible_gpx_data = [];
       $visible = $this->getSetting('visible_gpx_data');
 
-      foreach($visible as $key => $value) {
-        if($value) {
+      foreach ($visible as $key => $value) {
+        if ($value) {
           $visible_gpx_data[] = $value;
         }
       }
 
-      if(in_array('elevation', $visible_gpx_data)) {
-        $elements[$delta] = [
-          'elevation' => [
-            '#type' => 'inline_template',
-            '#template' => '<label>' . $this->t('Elevation') . '</label><div>' . $item->elevation . 'm</div>',
-            '#prefix' => '<div>',
-            '#suffix' => '</div>',
-          ]
+      if (in_array('distance', $visible_gpx_data)) {
+        $elements[$delta]['distance'] = [
+          '#type' => 'inline_template',
+          '#template' => '<label>' . $this->t('Distance') . '</label><div>' . round($item->distance / 1000, 2) . 'km</div>',
+          '#prefix' => '<div class="distance">',
+          '#suffix' => '</div>',
         ];
       }
 
-      if(in_array('demotion', $visible_gpx_data)) {
-        $elements[$delta] = [
-          'demotion' => [
-            '#type' => 'inline_template',
-            '#template' => '<label>' . $this->t('Demotion') . '</label><div>' . $item->demotion . 'm</div>',
-            '#prefix' => '<div>',
-            '#suffix' => '</div>',
-          ]
+      if (in_array('elevation', $visible_gpx_data)) {
+        $elements[$delta]['elevation'] = [
+          '#type' => 'inline_template',
+          '#template' => '<label>' . $this->t('Elevation') . '</label><div>' . (int)$item->elevation . 'm</div>',
+          '#prefix' => '<div class="elevation">',
+          '#suffix' => '</div>',
         ];
       }
 
-      if(in_array('lowest_point', $visible_gpx_data)) {
-        $elements[$delta] = [
-          'lowest_point' => [
-            '#type' => 'inline_template',
-            '#template' => '<label>' . $this->t('Lowest point') . '</label><div>' . $item->lowest_point . 'm</div>',
-            '#prefix' => '<div>',
-            '#suffix' => '</div>',
-          ]
+      if (in_array('demotion', $visible_gpx_data)) {
+        $elements[$delta]['demotion'] = [
+          '#type' => 'inline_template',
+          '#template' => '<label>' . $this->t('Demotion') . '</label><div>' . $item->demotion . 'm</div>',
+          '#prefix' => '<div class="demotion">',
+          '#suffix' => '</div>',
         ];
       }
 
-      if(in_array('highest_point', $visible_gpx_data)) {
-        $elements[$delta] = [
-          'highest_point' => [
-            '#type' => 'inline_template',
-            '#template' => '<label>' . $this->t('Highest point') . '</label><div>' . $item->highest_point . 'm</div>',
-            '#prefix' => '<div>',
-            '#suffix' => '</div>',
-          ]
+      if (in_array('lowest_point', $visible_gpx_data)) {
+        $elements[$delta]['lowest_point'] = [
+          '#type' => 'inline_template',
+          '#template' => '<label>' . $this->t('Lowest point') . '</label><div>' . $item->lowest_point . 'm</div>',
+          '#prefix' => '<div class="lowest-point">',
+          '#suffix' => '</div>',
         ];
       }
 
-      if(in_array('distance', $visible_gpx_data)) {
-        $elements[$delta] = [
-          'demotion' => [
-            '#type' => 'inline_template',
-            '#template' => '<label>' . $this->t('Distance') . '</label><div>' . round($item->distance/1000,2) . 'km</div>',
-            '#prefix' => '<div>',
-            '#suffix' => '</div>',
-          ]
+      if (in_array('highest_point', $visible_gpx_data)) {
+        $elements[$delta]['highest_point'] = [
+          '#type' => 'inline_template',
+          '#template' => '<label>' . $this->t('Highest point') . '</label><div>' . $item->highest_point . 'm</div>',
+          '#prefix' => '<div class="highest-point">',
+          '#suffix' => '</div>',
         ];
       }
 
-      if(in_array('points', $visible_gpx_data)) {
-        $elements[$delta] = [
-          'demotion' => [
+      if (in_array('points', $visible_gpx_data)) {
+        $elements[$delta]['points'] = [
             '#type' => 'inline_template',
             '#template' => '<label>' . $this->t('Points') . '</label><div>' . count($item->points) . '</div>',
-            '#prefix' => '<div>',
+            '#prefix' => '<div class="points">',
             '#suffix' => '</div>',
-          ]
         ];
       }
     }
