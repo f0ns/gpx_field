@@ -72,7 +72,9 @@ class GpxTextFormatter extends FormatterBase {
     $elements = [];
     foreach ($items as $delta => &$item) {
       $visible_gpx_data = [];
-      $visible_gpx_data = array_filter($this->getSetting('visible_gpx_data'));
+      if ($visible_data = $this->getSetting('visible_gpx_data')) {
+        $visible_gpx_data = array_filter($visible_data);
+      }
 
       if (in_array('distance', $visible_gpx_data)) {
         $elements[$delta]['distance'] = [

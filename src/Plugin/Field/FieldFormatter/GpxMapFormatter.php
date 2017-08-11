@@ -3,8 +3,8 @@
 namespace Drupal\gpx_field\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\file\Entity\File;
 use Drupal\highcharts\Highchart;
 use Drupal\leaflet\Plugin\Field\FieldFormatter\LeafletDefaultFormatter;
 
@@ -26,7 +26,7 @@ class GpxMapFormatter extends LeafletDefaultFormatter {
    */
   public static function defaultSettings() {
     return [
-      ] + parent::defaultSettings();
+    ] + parent::defaultSettings();
   }
 
   /**
@@ -53,14 +53,11 @@ class GpxMapFormatter extends LeafletDefaultFormatter {
     $elements = [];
 
     foreach ($items as $delta => $item) {
-
-      $amount_of_points = count($item->points);
-
       $features = [
         [
           'type' => 'point',
-          'lat' => $item->points[0]['lat'],
-          'lon' => $item->points[0]['lon'],
+          'lat' => $item->start_lat,
+          'lon' => $item->start_lon,
           'icon' => [
             'iconUrl' => '/' . drupal_get_path('module', 'gpx_field') . '/images/start.png',
             'iconSize' => [17, 17],
@@ -76,8 +73,8 @@ class GpxMapFormatter extends LeafletDefaultFormatter {
         ],
         [
           'type' => 'point',
-          'lat' => $item->points[$amount_of_points - 1]['lat'],
-          'lon' => $item->points[$amount_of_points - 1]['lon'],
+          'lat' => $item->end_lat,
+          'lon' => $item->end_lon,
           'icon' => [
             'iconUrl' => '/' . drupal_get_path('module', 'gpx_field') . '/images/finish.png',
             'iconSize' => [17, 17],
@@ -91,12 +88,12 @@ class GpxMapFormatter extends LeafletDefaultFormatter {
         }
       }
 
+      // Render elevation chart.
       $elevation_profile_chart_options = $this->getChartOptions($item);
       $elevation_profile_chart_series = $this->getChartSeries($item);
-
       $elevation_profile_chart = new Highchart($elevation_profile_chart_options, $elevation_profile_chart_series);
 
-      $gpx_file = \Drupal\file\Entity\File::load($item->target_id);
+      $gpx_file = File::load($item->target_id);
       $gpx_file_url = file_create_url($gpx_file->getFileUri());
 
       $elements[$delta] = [
@@ -121,9 +118,12 @@ class GpxMapFormatter extends LeafletDefaultFormatter {
     return $elements;
   }
 
+  /**
+   * Returns chart options
+   * @param $item
+   * @return array
+   */
   protected function getChartOptions($item) {
-    $options = [];
-
     $options = [
       'title' => [
         'text' => '',
@@ -150,7 +150,7 @@ class GpxMapFormatter extends LeafletDefaultFormatter {
       'colors' => ['#204dcc'],
       'tooltip' => [
         'headerFormat' => '',
-        'pointFormat' => $this->t('Elevation').': {point.y:,.0f}m<br/>'.$this->t('Distance').': {point.x:.1f}km'
+        'pointFormat' => $this->t('Elevation') . ': {point.y:,.0f}m<br/>' . $this->t('Distance') . ': {point.x:.1f}km'
       ],
       'legend' => [
         'enabled' => FALSE
@@ -160,9 +160,12 @@ class GpxMapFormatter extends LeafletDefaultFormatter {
     return $options;
   }
 
+  /**
+   * Returns chart series.
+   * @param $item
+   * @return array
+   */
   protected function getChartSeries($item) {
-    $series = [];
-
     $series = [
       [
         'type' => 'area',

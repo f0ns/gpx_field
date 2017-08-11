@@ -202,14 +202,12 @@ class LeafletLinestring extends RowPluginBase implements ContainerFactoryPluginI
 
     if ($entity->hasField($data_source) && !empty($entity->{$data_source}->points)) {
       $points = $entity->{$data_source}->points;
-      $start = reset($points);
-      $end = end($points);
 
       $data = [
         [
           'type' => 'point',
-          'lat' => $start['lat'],
-          'lon' => $start['lon'],
+          'lat' => $entity->{$data_source}->start_lat,
+          'lon' => $entity->{$data_source}->start_lon,
           'icon' => [
             'iconUrl' => '/' . drupal_get_path('module', 'gpx_field') . '/images/start.png',
             'iconSize' => [17, 17],
@@ -226,8 +224,8 @@ class LeafletLinestring extends RowPluginBase implements ContainerFactoryPluginI
         ],
         [
           'type' => 'point',
-          'lat' => $end['lat'],
-          'lon' => $end['lon'],
+          'lat' => $entity->{$data_source}->end_lat,
+          'lon' => $entity->{$data_source}->end_lon,
           'icon' => [
             'iconUrl' => '/' . drupal_get_path('module', 'gpx_field') . '/images/finish.png',
             'iconSize' => [17, 17],
