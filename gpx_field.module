@@ -1,8 +1,11 @@
 <?php
 
-function gpx_field_theme($existing, $type, $theme, $path) {
+/**
+ * Implements hook_theme().
+ */
+function gpx_field_theme() {
   return [
-    'gpx_map' => [
+    'gpx_stats' => [
       'variables' => [
         'elevation' => NULL,
         'demotion' => NULL,
@@ -11,7 +14,12 @@ function gpx_field_theme($existing, $type, $theme, $path) {
         'distance' => NULL,
         'points' => NULL,
         'elevation_profile' => NULL,
-        'gpx_file' => NULL],
+      ],
     ],
+    'gpx_download' => [
+      'variables' => [
+        'gpx_file_url' => NULL
+      ]
+    ]
   ];
 }

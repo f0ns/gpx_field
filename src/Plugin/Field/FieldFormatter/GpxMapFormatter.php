@@ -100,15 +100,18 @@ class GpxMapFormatter extends LeafletDefaultFormatter {
       $gpx_file_url = file_create_url($gpx_file->getFileUri());
 
       $elements[$delta] = [
-        'gpx_map' => [
-          '#theme' => 'gpx_map',
+        'gpx_download' => [
+          '#theme' => 'gpx_download',
+          '#gpx_file_url' => $gpx_file_url,
+        ],
+        'gpx_stats' => [
+          '#theme' => 'gpx_stats',
           '#elevation' => $item->elevation,
           '#demotion' => $item->demotion,
           '#lowest_point' => $item->lowest_point,
           '#highest_point' => $item->highest_point,
           '#distance' => round($item->distance / 1000, 2),
           '#points' => count($item->points),
-          '#gpx_file' => $gpx_file_url,
         ],
         'map' => leaflet_render_map($map, $features, $settings['height'] . 'px'),
         'elevation_profile' => $elevation_profile_chart->render(),
@@ -140,6 +143,9 @@ class GpxMapFormatter extends LeafletDefaultFormatter {
         'labels' => [
           'formatter' => 'function () { return this.value + \'m\'; }'
         ]
+      ],
+      'chart' => [
+        'backgroundColor' => '#efeff4'
       ],
       'colors' => ['#204dcc'],
       'tooltip' => [
