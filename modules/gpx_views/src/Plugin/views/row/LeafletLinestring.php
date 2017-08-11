@@ -2,6 +2,7 @@
 
 namespace Drupal\gpx_views\Plugin\views\row;
 
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
 use Drupal\views\Plugin\views\row\RowPluginBase;
@@ -195,18 +196,20 @@ class LeafletLinestring extends RowPluginBase implements ContainerFactoryPluginI
 
     $data = [];
 
+    /** @var ContentEntityInterface $entity */
     $entity = $row->_entity;
-    $datasource = $this->options['data_source'];
+    $data_source = $this->options['data_source'];
 
-    if (isset($entity->$datasource->points)) {
-      $points = $entity->$datasource->points;
-      $amount_of_points = count($points);
+    if ($entity->hasField($data_source) && !empty($entity->{$data_source}->points)) {
+      $points = $entity->{$data_source}->points;
+      $start = reset($points);
+      $end = end($points);
 
       $data = [
         [
           'type' => 'point',
-          'lat' => $points[0]['lat'],
-          'lon' => $points[0]['lon'],
+          'lat' => $start['lat'],
+          'lon' => $start['lon'],
           'icon' => [
             'iconUrl' => '/' . drupal_get_path('module', 'gpx_field') . '/images/start.png',
             'iconSize' => [17, 17],
@@ -219,12 +222,12 @@ class LeafletLinestring extends RowPluginBase implements ContainerFactoryPluginI
           'options' => [
             'color' => '#2d5be3'
           ],
-          'popup' => $entity->getTitle(),
+          'popup' => $entity->label(),
         ],
         [
           'type' => 'point',
-          'lat' => $points[$amount_of_points - 1]['lat'],
-          'lon' => $points[$amount_of_points - 1]['lon'],
+          'lat' => $end['lat'],
+          'lon' => $end['lon'],
           'icon' => [
             'iconUrl' => '/' . drupal_get_path('module', 'gpx_field') . '/images/finish.png',
             'iconSize' => [17, 17],
